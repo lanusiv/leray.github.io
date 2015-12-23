@@ -47,14 +47,13 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
     private static final int SPEED = 60;
     private final int fullCircleCount = 360 / SPEED;
 
-    private RectF rect;
+    private RectF mRect;
     private List<Award> list = new ArrayList<Award>();
     private static int[] images = {R.drawable.p01, R.drawable.p02,
             R.drawable.p03, R.drawable.p04, R.drawable.ic_launcher,
             R.drawable.p05};
     private int startAngle = 0;
     private int sweepAngle = 60;
-    private int[] colors = {Color.GREEN, Color.RED};
     // red, green, yellow, pink, purple, blue, deep_orange
     private String[] hexColors = {"#F44336", "#4CAF50", "#FFC107", "#E91E63", "#9C27B0", "#2196F3", "#FF5722"};
     private boolean shouldStart = false;
@@ -64,6 +63,7 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
     private int vInterval = 60;  // 每刷新一次的时间间隔， 每次转60度，转六次完成一圈，即转一圈需要540（6×90）毫秒
     private RectF mTextRange;
 
+<<<<<<< HEAD
     private GestureDetector detector;
 
     private int sweepDirection = 0;  // 转动方向 1 - 顺时针，-1 - 逆时针
@@ -74,6 +74,10 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
 
     private boolean isAutoRunnging = false;
 
+=======
+
+    private RunningStateChangeListener mListener;
+>>>>>>> 31c4bd77c64824f0c0ac61b9cab6ec5cf02dd19e
 
     public RaffleWheelView(Context context) {
         super(context);
@@ -117,8 +121,10 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
         // Set up a default TextPaint object
         mTextPaint = new TextPaint();
         mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextAlign(Paint.Align.CENTER);
+//        mTextPaint.setTextAlign(Paint.Align.CENTER);
         mTextPaint.setColor(mViewColor);
+        mRect = new RectF();
+        mTextRange = new RectF();
 
         initData();
         new Thread(this).start();
@@ -152,8 +158,8 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
 
     /**
      * 设置控件为正方形
-     * @param widthMeasureSpec
-     * @param heightMeasureSpec
+     * @param widthMeasureSpec width
+     * @param heightMeasureSpec  height
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -172,13 +178,13 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
         centerX = getWidth() / 2;
         centerY = getHeight() / 2;
         radius = Math.min(contentWidth, contentHeight) / 2;
-        rect = new RectF();
-        rect.set(centerX - contentWidth / 2, centerY - contentHeight / 2, centerX + contentWidth / 2, centerY + contentHeight / 2);
+        mRect.set(centerX - contentWidth / 2, centerY - contentHeight / 2, centerX + contentWidth / 2, centerY + contentHeight / 2);
 
-        mTextRange = new RectF(getPaddingLeft(), getPaddingLeft(), radius * 2
+        mTextRange.set(getPaddingLeft(), getPaddingLeft(), radius * 2
                 + getPaddingLeft(), radius * 2 + getPaddingLeft());
 
-        setMeasuredDimension(width, width);
+        int height = width;
+        setMeasuredDimension(width, height);
     }
 
     @Override
@@ -199,14 +205,19 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
         for (Award award : list) {
             int color = Color.parseColor(hexColors[i]);
             paint.setColor(color);
+<<<<<<< HEAD
             mCanvas.drawArc(rect, startAngle, sweepAngle, true, paint);
             drawText(startAngle, sweepAngle, " " + i);
+=======
+            mCanvas.drawArc(mRect, startAngle, sweepAngle, true, paint);
+            drawText(startAngle, sweepAngle, "Num " + i);
+>>>>>>> 31c4bd77c64824f0c0ac61b9cab6ec5cf02dd19e
 
             // draw text and bitmap that to the center point
             // save
             mCanvas.save();
             mCanvas.rotate(startAngle + sweepAngle + sweepAngle, centerX, centerY);
-//            mCanvas.drawText(i + " Good Luck!", centerX, rect.top + 360, mTextPaint);
+//            mCanvas.drawText(i + " Good Luck!", centerX, mRect.top + 360, mTextPaint);
             drawImage(award.image, 0);
             mCanvas.restore();
             // restore
@@ -247,15 +258,23 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
      */
     private void drawText(float startAngle, float sweepAngle, String string) {
         Path path = new Path();
-        path.addArc(rect, startAngle, sweepAngle);
+        path.addArc(mRect, startAngle, sweepAngle);
         float textWidth = mTextPaint.measureText(string);
         // 利用水平偏移让文字居中
         int size = list.size();
+<<<<<<< HEAD
         float hOffset = (float) (radius * Math.PI / size / 3 - textWidth);// 水平偏移
 //        Log.d("hello", "hOffset: " + hOffset + ", textWidth: " + textWidth);
 //        float vOffset = radius / 2 / 6;// 垂直偏移
         float vOffset = rect.top + 1 * radius / 2;
         mCanvas.drawTextOnPath(string, path, 0, vOffset, mTextPaint);
+=======
+        float hOffset = (float) (radius * 2 * Math.PI / size / 2 - textWidth / 2);// 水平偏移
+//        Log.d("hello", "hOffset: " + hOffset + ", textWidth: " + textWidth);
+//        float vOffset = radius / 2 / 6;// 垂直偏移
+        float vOffset = mRect.top + 1 * radius / 2;
+        mCanvas.drawTextOnPath(string, path, hOffset, vOffset, mTextPaint);
+>>>>>>> 31c4bd77c64824f0c0ac61b9cab6ec5cf02dd19e
     }
 
     /**
@@ -324,6 +343,7 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
                 }
                 if (speed == 0) {
                     shouldStart = false;
+<<<<<<< HEAD
                     // 判断当前转动是点击按钮还是滑动
                     if (isRunningByTouch) {
                         isFling = false;
@@ -331,6 +351,9 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
                     } else {
                         isAutoRunnging = false;
                     }
+=======
+                    stopRunning();
+>>>>>>> 31c4bd77c64824f0c0ac61b9cab6ec5cf02dd19e
                 }
                 float s = speed * sweepDirection;
                 startAngle += s; // speed; // 60
@@ -340,6 +363,7 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
 
     }
 
+<<<<<<< HEAD
     double oldx = 0, oldy = 0;
     double curx = 0, cury = 0;
 
@@ -448,4 +472,22 @@ public class RaffleWheelView extends View implements Runnable, View.OnTouchListe
      float rAngle = Math.round(Math.atan2(v[Matrix.MSKEW_X], v[Matrix.MSCALE_X]) * (180 / Math.PI));
      */
 
+=======
+    private void stopRunning() {
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mListener.onStop();
+            }
+        }, 1000);
+    }
+
+    public void setOnRunningStateChangerListener(RunningStateChangeListener listener) {
+        this.mListener = listener;
+    }
+
+    public interface RunningStateChangeListener {
+        void onStop();
+    }
+>>>>>>> 31c4bd77c64824f0c0ac61b9cab6ec5cf02dd19e
 }

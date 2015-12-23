@@ -5,12 +5,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 
 public class MainActivity extends ActionBarActivity {
 
     private RaffleWheelView circleView;
+    private Button startBtn;
     private boolean isRunning = false;
     int position = 0;
     @Override
@@ -18,11 +20,20 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         circleView = (RaffleWheelView) findViewById(R.id.circleView);
+        startBtn = (Button) findViewById(R.id.button);
+
+        circleView.setOnRunningStateChangerListener(new RaffleWheelView.RunningStateChangeListener() {
+            @Override
+            public void onStop() {
+                startBtn.setEnabled(true);
+            }
+        });
     }
 
     public void start(View view) {
         if (isRunning) {
             circleView.stopRun();
+            startBtn.setEnabled(false);
             ((TextView)view).setText("Start(" + position + ")");
             isRunning = false;
         } else {
